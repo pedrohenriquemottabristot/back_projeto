@@ -30,6 +30,7 @@ public class ProductController {
         newProduct.setId(product.getId());
         newProduct.setName(product.getName());
         newProduct.setPrice(product.getPrice());
+        newProduct.setDescription(product.getDescription());
         //Chama o método save para salvar o objeto no banco de dados
         return productRepository.save(newProduct);
     }
@@ -45,7 +46,7 @@ public class ProductController {
         updateProduct.setId(product.getId());
         updateProduct.setName(product.getName());
         updateProduct.setPrice(product.getPrice());
-
+        updateProduct.setDescription(product.getDescription());
         return productRepository.save(updateProduct);
     }
     //Método deletar product

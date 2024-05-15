@@ -28,6 +28,7 @@ public class UserController {
         Users newUsers = new Users();
         //Seta as propriedades do Coffee
         newUsers.setUsername(users.getUsername());
+        newUsers.setEmail(users.getEmail());
         newUsers.setPassword(users.getPassword());
         //Chama o método save para salvar o objeto no banco de dados
         return usersRepository.save(newUsers);
@@ -43,7 +44,9 @@ public class UserController {
 
         updateUsers.setId(users.getId());
         updateUsers.setUsername(users.getUsername());
+        updateUsers.setEmail(users.getEmail());
         updateUsers.setPassword(users.getPassword());
+
 
         return usersRepository.save(updateUsers);
     }
