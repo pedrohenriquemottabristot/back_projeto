@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/product") //rota pra salvar /product/createproduct
 public class ProductController {
     @Autowired
     ProductRepository productRepository;
@@ -27,26 +29,26 @@ public class ProductController {
         //Cria um novo objeto Product
         Product newProduct = new Product();
         //Seta as propriedades do Product
-        newProduct.setId(product.getId());
         newProduct.setName(product.getName());
-        newProduct.setPrice(product.getPrice());
         newProduct.setDescription(product.getDescription());
+        newProduct.setPrice(product.getPrice());
         //Chama o método save para salvar o objeto no banco de dados
         return productRepository.save(newProduct);
     }
-
-    @PutMapping(value="/updateProduct",
+    //api.put(`product/updateProduct/${id}
+    @PutMapping(value="/updateProduct/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Product updateProduct(@RequestBody Product product){
-        Product getProduct = productRepository
-                .findById(product.getId()).orElseThrow();
+    public Product updateProduct(@RequestBody Product product,
+                                 @PathVariable Long id){
+        Product getProduct = productRepository.findById(id).orElseThrow();
         Product updateProduct = new Product();
-
-        updateProduct.setId(product.getId());
-        updateProduct.setName(product.getName());
+        System.out.println("preço: " +product.getPrice());
+        updateProduct.setId(id);
+        updateProduct.setName(getProduct.getName());
+        updateProduct.setDescription(getProduct.getDescription());
         updateProduct.setPrice(product.getPrice());
-        updateProduct.setDescription(product.getDescription());
+
         return productRepository.save(updateProduct);
     }
     //Método deletar product
@@ -59,5 +61,22 @@ public class ProductController {
         //chamamos o método .delete e passamos o café a ser deletado
         productRepository.delete(getProduct);
         return getProduct;
+    }
+
+    // método filtrar produtos de manutenção de produtos
+    @GetMapping(value = "/filtro/{palavra}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Product> filtrarLista(@PathVariable String palavra) {
+        // Search for products using the provided 'palavra'
+        List<Product> filteredProducts = productRepository.findByNameContainingIgnoreCase(palavra);
+
+        // Check if any products were found
+        if (filteredProducts.isEmpty()) {
+            // No products found, return an empty list
+            return Collections.emptyList();
+        }
+
+        // Products found, return the filtered list
+        return filteredProducts;
     }
 }
